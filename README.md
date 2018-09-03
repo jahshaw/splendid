@@ -20,3 +20,4 @@ The parameters returned are:
 ## Notes
 - Written and tested using Python 3.6, I have no idea whether this works on earlier versions.
 - This requires the 'geopy' module to calculate distances (use pip install to get it).  Geopy uses a WGS84 spheroid projection so the inter-capital distances are slightly different than those calculated by Bilen on the UGQ spreadsheet (by up to about 0.5%).  However, Jon Lawn has confirmed this doesn't change any answers.
+- Beware that currently the check_isolation function won't alert you at all if you enter a capital that it can't find (e.g. making a typo).
