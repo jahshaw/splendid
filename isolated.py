@@ -1,4 +1,5 @@
 from geopy.distance import distance
+from itertools import combinations
 
 
 class Capital(object):
@@ -27,6 +28,7 @@ class Capital(object):
 # Replace with:  "$1": {'lat': $2, 'long': $3},
 # or:  Capital("$1", $2, $3),
 
+
 ALL_CAPS_TEST_SET = [
 Capital("Kabul", 34.5553, 69.2075),
 Capital("Tirana", 41.3275, 19.8187),
@@ -35,7 +37,7 @@ Capital("Andorra la Vella", 42.5063, 1.5218),
 Capital("Luanda", -8.84, 13.2894)
 ]
 
-ALL_CAPS = [
+ALL_CAPS_REAL_SET = [
 Capital("Kabul", 34.5553, 69.2075),
 Capital("Tirana", 41.3275, 19.8187),
 Capital("Algiers", 36.7538, 3.0588),
@@ -240,6 +242,10 @@ Capital("Lusaka", 15.3872, 28.3228),
 Capital("Harare", 17.8252, 31.0335)
 ]
 
+# Use this to switch to a simple test set when debugging.
+# ALL_CAPS = ALL_CAPS_TEST_SET
+ALL_CAPS = ALL_CAPS_REAL_SET
+
 
 def precompute_distances():
 
@@ -293,7 +299,35 @@ def check_isolation(capitals):
     return (bond_dist, isol_dist, rel_isol, is_isolated)
 
 
+def brute_force(cardinality):
+    """Attempt to brute-force all combinations of capitals for a given cardinality and report the best."""
+
+    # Get an iterator with all the possible combinations of capitals.
+    iterator = combinations(ALL_CAPS, cardinality)
+    best_isol = 0
+    best_rel = 0
+
+    for combo in iterator:
+        # Grab the next combination and test it.
+        test_set = list(map(lambda cap: cap.name, combo))
+        _, isol_dist, rel_isol, is_isolated = check_isolation(test_set)
+
+        # Assuming it's isolated, update params
+        if is_isolated:
+            if isol_dist > best_isol:
+                best_isol = isol_dist
+                best_isol_set = test_set
+            if rel_isol > best_rel:
+                best_rel = rel_isol
+                best_rel_set = test_set
+
+    print("Results for cardinality " + str(cardinality))
+    print("Best absolute isolation set " + str(best_isol_set) + " with dist " + str(best_isol) + "km")
+    print("Best relative isolation set " + str(best_rel_set) + " with " + str(best_rel))
+
+
 precompute_distances()
+brute_force(2)
 #print(ALL_CAPS[0].distance_to)
 #print(ALL_CAPS[0].sorted_dists)
 #print(check_isolation(["Kabul", "Algiers"]))
